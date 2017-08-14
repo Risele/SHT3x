@@ -1,5 +1,5 @@
 # SHT3x
-## Arduino library for Sensorion temperature and humidity sensors SHT30, SHT31 & SHT35.
+## Arduino library for Sensirion temperature and humidity sensors SHT30, SHT31 & SHT35.
 The heavy version.  
 Check for /examples for examples of different use cases.  
 
