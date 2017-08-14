@@ -1,4 +1,5 @@
 # SHT3x
+## Arduino library for Sensorion temperature and humidity sensors SHT30, SHT31 & SHT35.
 The heavy version.  
 Check for /examples for examples of different use cases.  
 
@@ -14,7 +15,7 @@ SHT3x(    int Address = 0x44, //I2C device address, 0x44 or 0x45
         SHT3xMode Mode=Single_HighRep_ClockStretch //Operation mode , look for "enum SHT3xMode"  
 ); 
 
-## Supports:  
+### Supports:  
     Temperature data at Celsius, Kelvin and Fahrenheit scales.  
     Relative humidity data.  
     Absolute humidity data at Torr, mm Hg, Pa, bar, technical and standard atmosphere, psi scales.  
@@ -25,7 +26,7 @@ SHT3x(    int Address = 0x44, //I2C device address, 0x44 or 0x45
     Different sensor actions modes (datasheet/section 4.3)  
     Reset: soft (I2C) and hard (by corresponding pin) (datasheet/section 4.9)  
     
-## Do not supports:  
+### Do not supports:  
     Action in periodic mode (datasheet/section 4.5)  
     Interrupts (datasheet/section 3.5)  
     
