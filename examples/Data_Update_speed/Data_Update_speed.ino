@@ -24,7 +24,7 @@ void loop() {
     Serial.println();
     
     Serial.println("Relative Humidity, %");
-    Serial.print("F: "); Serial.print(Sensor_H.GetRelHumidity(),2);
+    Serial.print("F: "); Serial.print(Sensor_FAST.GetRelHumidity(),2);
     Serial.print(" | ");
     Serial.print("S: "); Serial.print(Sensor_SLOW.GetRelHumidity(),2);
   delay(333);
