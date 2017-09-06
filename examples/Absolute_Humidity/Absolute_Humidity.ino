@@ -2,13 +2,20 @@
  * Processes in Nature (not the journal) does not takes _relative_ humidity into account.
  * They takes into account _absolute_ humidity (water vapor pressure).
  * So, that library supports vapor pressure calculation.
- * All pressure scales I found in Wikipedia are available (check SHT3x.h, "enum AbsHumidityScale").
+ * All pressure scales I found in Wikipedia are available:  
+ *    mmHg, Torr,
+      Pa,   Bar,
+      At    (Techical atmosphere),
+      Atm   (Standart atmosphere),
+      mH2O, //O is the letter, not zero
+      psi,
+ * (check SHT3x.h, "enum AbsHumidityScale").
  * The absolute humidity tolerance could be recieved in same scales too.
  */
 
 
 #include <SHT3x.h>
-SHT3x Sensor(0x44);
+SHT3x Sensor;
 void setup() {
   
   Serial.begin(19200);
@@ -40,9 +47,9 @@ void loop() {
 
   //And other...
 
-  Serial.print(" ± ");
+  Serial.print(" Tolerance: ±");
   Serial.print(Sensor.GetAbsHumTolerance(SHT3x::mH2O));
-  
+  Serial.print(" mH2O");
   
 
   Serial.println();
