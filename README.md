@@ -15,6 +15,9 @@ SHT3x(    int Address = 0x44, //I2C device address, 0x44 or 0x45
         SHT3xMode Mode=Single_HighRep_ClockStretch //Operation mode , look for "enum SHT3xMode"  
 ); 
 
+Do not forget about the UpdateData() method: this method polls sensors.
+
+
 ### Supports:  
     Temperature data at Celsius, Kelvin and Fahrenheit scales.  
     Relative humidity data.  
