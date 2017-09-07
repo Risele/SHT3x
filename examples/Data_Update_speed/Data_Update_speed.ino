@@ -16,6 +16,9 @@ void setup() {
 }
 
 void loop() {
+    
+    Sensor_FAST.UpdateData();
+    Sensor_SLOW.UpdateData();
 
     Serial.println("Temperature, \xC2\xB0C");
     Serial.print("F: "); Serial.print(Sensor_FAST.GetTemperature(),2);
