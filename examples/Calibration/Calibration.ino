@@ -49,7 +49,7 @@ void setup() {
   HumidityReference.Second = 100.;
   HumiditySHT.First = 5.3;
   HumiditySHT.Second = 97.;
-  Sensor.SetRelHumidutyCalibrationPoints(HumiditySHT, HumidityReference);
+  Sensor.SetRelHumidityCalibrationPoints(HumiditySHT, HumidityReference);
 
   SHT3x::CalibrationFactors TemperatureCalibration;
   TemperatureCalibration.Factor = -1.;
