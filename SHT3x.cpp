@@ -10,56 +10,100 @@
 	
 }
 
-void	SHT3x::Begin()
+void	SHT3x::Begin(int SDA, int SCL)
 {
-	Wire.begin();
+	if (SDA==0) Wire.begin();
+	else Wire1.begin(SDA, SCL);
 	_OperationEnabled = true;
 }
 
-void	SHT3x::UpdateData()
+void	SHT3x::UpdateData(int SDA)
 {
 	_Error = noError;
 	if ((_LastUpdateMillisec == 0) || ((millis()-_LastUpdateMillisec)>=_UpdateIntervalMillisec))
 	{
-		SendCommand(_MeasMSB,_MeasLSB);
+		SendCommand(_MeasMSB,_MeasLSB,SDA);
 		if (_Error == noError)
 		{
-			Wire.requestFrom(_Address, (uint8_t)6);
-			uint32_t WaitingBeginTime = millis();
-			while ((Wire.available()<6) && ((millis() - WaitingBeginTime) < _TimeoutMillisec))
-			{
-				//Do nothing, just wait
-			}
-			if ((millis() - WaitingBeginTime) < _TimeoutMillisec)
-			{
-				_LastUpdateMillisec = WaitingBeginTime; 
-				uint8_t data[6];
-				for (uint8_t i = 0; i<6; i++)
-				{
-					data[i] = Wire.read();
-				}
+		   if (SDA==0) 
+		   {
+		      Wire.requestFrom(_Address, (uint8_t)6);
+			  uint32_t WaitingBeginTime = millis();
+	       		 while ((Wire.available()<6) && ((millis() - WaitingBeginTime) < _TimeoutMillisec))
+			  {
+				   //Do nothing, just wait
+			  }
+			  if ((millis() - WaitingBeginTime) < _TimeoutMillisec)
+			  {
+			      _LastUpdateMillisec = WaitingBeginTime; 
+			      uint8_t data[6];
+				  for (uint8_t i = 0; i<6; i++)
+				  {
+			    	 data[i] = Wire.read();
+				  }
 				
-				if ((CRC8(data[0],data[1],data[2])) && (CRC8(data[3],data[4],data[5])))
-				{
-					uint16_t TemperatureRaw 	= (data[0]<<8)+(data[1]<<0);
-					uint16_t RelHumidityRaw 	= (data[3]<<8)+(data[4]<<0);
-					_TemperatureCeil =	((float) TemperatureRaw) * 0.00267033 - 45.;
-					_TemperatureCeil =	_TemperatureCeil*_TemperatureCalibration.Factor +
-										_TemperatureCalibration.Shift;
-					_RelHumidity =	((float) RelHumidityRaw) * 0.0015259;
-					_RelHumidity =	_RelHumidity * _RelHumidityCalibration.Factor +
-									_RelHumidityCalibration.Shift;
+				  if ((CRC8(data[0],data[1],data[2])) && (CRC8(data[3],data[4],data[5])))
+				  {
+					 uint16_t TemperatureRaw 	= (data[0]<<8)+(data[1]<<0);
+					 uint16_t RelHumidityRaw 	= (data[3]<<8)+(data[4]<<0);
+				     _TemperatureCeil =	((float) TemperatureRaw) * 0.00267033 - 45.;
+					 _TemperatureCeil =	_TemperatureCeil*_TemperatureCalibration.Factor +
+					   					    _TemperatureCalibration.Shift;
+					 _RelHumidity =	((float) RelHumidityRaw) * 0.0015259;
+				     _RelHumidity =	_RelHumidity * _RelHumidityCalibration.Factor +
+					   				    _RelHumidityCalibration.Shift;
 					
-					_Error = noError;
-				}
-				else
-				{
-					_Error = DataCorrupted;
-				}
-			} 
-			else //Timeout
-			{
-				_Error = Timeout;
+				     _Error = noError;
+				  }
+			      else
+				  {
+				 	 _Error = DataCorrupted;
+			      }
+			  } 
+			  else //Timeout
+			  {
+		   	     _Error = Timeout;
+			  } 
+		   }
+		   else
+		   {
+		      Wire1.requestFrom(_Address, (uint8_t)6);
+			  uint32_t WaitingBeginTime = millis();
+	       	  while ((Wire1.available()<6) && ((millis() - WaitingBeginTime) < _TimeoutMillisec))
+			  {
+				   //Do nothing, just wait
+			  }
+			  if ((millis() - WaitingBeginTime) < _TimeoutMillisec)
+			  {
+			      _LastUpdateMillisec = WaitingBeginTime; 
+			      uint8_t data[6];
+				  for (uint8_t i = 0; i<6; i++)
+				  {
+			    	 data[i] = Wire1.read();
+				  }
+				
+				  if ((CRC8(data[0],data[1],data[2])) && (CRC8(data[3],data[4],data[5])))
+				  {
+					 uint16_t TemperatureRaw 	= (data[0]<<8)+(data[1]<<0);
+					 uint16_t RelHumidityRaw 	= (data[3]<<8)+(data[4]<<0);
+				     _TemperatureCeil =	((float) TemperatureRaw) * 0.00267033 - 45.;
+					 _TemperatureCeil =	_TemperatureCeil*_TemperatureCalibration.Factor +
+					   					    _TemperatureCalibration.Shift;
+					 _RelHumidity =	((float) RelHumidityRaw) * 0.0015259;
+				     _RelHumidity =	_RelHumidity * _RelHumidityCalibration.Factor +
+					   				    _RelHumidityCalibration.Shift;
+					
+				     _Error = noError;
+				  }
+			      else
+				  {
+				 	 _Error = DataCorrupted;
+			      }
+			   } 
+			  else //Timeout
+			  {
+		   	     _Error = Timeout;
+			  } 			
 			}
 		} 
 		else //Error after message send
@@ -376,9 +420,9 @@ void	SHT3x::SetRelHumidityCalibrationPoints(CalibrationPoints SensorValues, Cali
 	_RelHumidityCalibration.Shift = Reference.First - _RelHumidityCalibration.Factor * SensorValues.First;
 }
 
-void 	SHT3x::SoftReset()
+void 	SHT3x::SoftReset(int SDA)
 {
-	SendCommand(0x30, 0xA2);
+	SendCommand(0x30, 0xA2, SDA);
 }
 
 void	SHT3x::HardReset()
@@ -392,14 +436,14 @@ void	SHT3x::HardReset()
 	}
 }
 
-void	SHT3x::HeaterOn()
+void	SHT3x::HeaterOn(int SDA)
 {
-	SendCommand(0x30, 0x6D);
+	SendCommand(0x30, 0x6D, SDA);
 }
 
-void	SHT3x::HeaterOff()
+void	SHT3x::HeaterOff(int SDA)
 {
-	SendCommand(0x30, 0x66);
+	SendCommand(0x30, 0x66, SDA);
 }
 
 void	SHT3x::SetAddress(uint8_t Address)
@@ -467,7 +511,7 @@ void 	SHT3x::I2CError(uint8_t I2Canswer)
 			}
 }
 
-void 	SHT3x::SendCommand(uint8_t MSB, uint8_t LSB)
+void 	SHT3x::SendCommand(uint8_t MSB, uint8_t LSB, int SDA)
 {
 	if (_OperationEnabled)
 	{
@@ -475,15 +519,28 @@ void 	SHT3x::SendCommand(uint8_t MSB, uint8_t LSB)
 	}
 	else 
 	{
-		Wire.begin();
+		if (SDA==0) Wire.begin();
+		else Wire1.begin();
 		_OperationEnabled = true;
 	}
-	Wire.beginTransmission(_Address);
-	// Send Soft Reset command
-	Wire.write(MSB);
-	Wire.write(LSB);
-	// Stop I2C transmission
-	uint8_t success = Wire.endTransmission();
+	if (SDA==0)
+	{
+	   Wire.beginTransmission(_Address);
+	   // Send Soft Reset command
+	   Wire.write(MSB);
+	   Wire.write(LSB);
+	   // Stop I2C transmission
+	   uint8_t success = Wire.endTransmission();
+	}
+	else
+	{
+	   Wire1.beginTransmission(_Address);
+	   // Send Soft Reset command
+	   Wire1.write(MSB);
+	   Wire1.write(LSB);
+	   // Stop I2C transmission
+	   uint8_t success = Wire1.endTransmission();
+	}
 }
 
 bool 	SHT3x::CRC8(uint8_t MSB, uint8_t LSB, uint8_t CRC)
@@ -545,3 +602,4 @@ void	SHT3x::ToReturnIfError(ValueIfError Value)
 {
 	_ValueIfError = Value;
 }
+
