@@ -125,8 +125,9 @@
 				SHT3xSensor SensorType = SHT30,
 				SHT3xMode Mode=Single_HighRep_ClockStretch);
 		
-		void Begin();
-		void UpdateData();
+		void Begin( int SDA = 0,
+		            int SCL = 0);
+		void UpdateData(int SDA = 0);
 		
 		float GetTemperature(TemperatureScale Degree = Cel);
 		float GetRelHumidity();
@@ -144,11 +145,11 @@
 		void SetTemperatureCalibrationPoints(CalibrationPoints SensorValues, CalibrationPoints Reference);
 		void SetRelHumidityCalibrationPoints(CalibrationPoints SensorValues, CalibrationPoints Reference);
 
-		void SoftReset();
+		void SoftReset(int SDA = 0);
 		void HardReset();
 		
-		void HeaterOn();
-		void HeaterOff();
+		void HeaterOn(int SDA = 0);
+		void HeaterOff(int SDA = 0);
 		
 		void SetAddress(uint8_t NewAddress);
 		void SetUpdateInterval(uint32_t UpdateIntervalMillisec);
@@ -169,7 +170,7 @@
 		uint32_t _UpdateIntervalMillisec = 500;
 		uint32_t _LastUpdateMillisec = 0;
 		uint32_t _TimeoutMillisec = 100;
-		void SendCommand(uint8_t MSB, uint8_t LSB);
+		void SendCommand(uint8_t MSB, uint8_t LSB, int SDA = 0);
 		bool CRC8(uint8_t MSB, uint8_t LSB, uint8_t CRC);
 		float ReturnValueIfError(float Value);
 		void ToReturnIfError(ValueIfError Value);
