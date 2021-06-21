@@ -564,14 +564,7 @@ bool 	SHT3x::CRC8(uint8_t MSB, uint8_t LSB, uint8_t CRC)
 	for (i = 0; i < 8; i++)
 				crc = crc & 0x80 ? (crc << 1) ^ 0x31 : crc << 1;
 
-	if (crc==CRC)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return (crc==CRC)
 }
 
 uint8_t	SHT3x::GetError()
