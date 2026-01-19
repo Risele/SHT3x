@@ -4,7 +4,7 @@
 	Check for /examples for examples of different use cases.
 	
 	The datasheet I followed is:
-	https://www.sensirion.com/fileadmin/user_upload/customers/sensirion/Dokumente/2_Humidity_Sensors/Sensirion_Humidity_Sensors_SHT3x_Datasheet_digital.pdf
+	https://sensirion.com/media/documents/213E6A3B/63A5A569/Datasheet_SHT3x_DIS.pdf
 	For more simple version check the SimpleSHT3x library.
 	
 	The constructor structure:
@@ -14,6 +14,8 @@
 				SHT3xSensor SensorType = SHT30, //Sensor type, SHT30, SHT31 or SHT35.
 				SHT3xMode Mode=Single_HighRep_ClockStretch //Operation mode , look for "enum SHT3xMode"
 				); 
+	
+	
 	
 	Supports:
 		Temperature data at Celsius, Kelvin and Fahrenheit scales.
@@ -30,8 +32,11 @@
 		Action in periodic mode (datasheet/section 4.5)
 		Interrupts (datasheet/section 3.5)
 		
-		
-		
+	For usign with Wire1/Wire2 #define BEFORE importing library:
+		#define SHT_Wire_1 //For Wire1
+		#define SHT_Wire_2 //For Wire2
+	Wire is used by default
+	
 	Note 1: by default, the data from sensor updates not faster, than 2 times a second.
 	For faster update use SetUpdateInterval(uint32_t UpdateIntervalMillisec); but do not exceed the datasheet values (10 measurments per second (100 ms)) because of sensor self-heating (datasheet/section 4.5, at the end of Table 9)
 	
@@ -55,14 +60,31 @@
 	#define SHT3x_h
 	
 	
+	
 	//Arduino standart libraries
 	#if defined(ARDUINO) && ARDUINO >= 100
 		#include "Arduino.h"
 		#else
 		#include "WProgram.h"
 	#endif 
-	//Arduino I2C/TWI library
+	
 	#include <Wire.h>
+	#if defined(SHT_Wire_1) && defined(SHT_Wire_2)
+		#error "Cannot define both SHT_Wire_1 and SHT_Wire_2 simultaneously"
+	#elif defined(SHT_Wire_1)
+
+		extern TwoWire Wire1;
+		#define shtWire Wire1
+	#elif defined(SHT_Wire_2)
+		extern TwoWire Wire2;
+		#define shtWire Wire2
+	#else
+		// default Wire
+		#define shtWire Wire
+	#endif
+
+	//Arduino I2C/TWI library
+	
 	//For calculating the tolerance of absolute humidity
 	#include <math.h> 
 	
@@ -125,9 +147,8 @@
 				SHT3xSensor SensorType = SHT30,
 				SHT3xMode Mode=Single_HighRep_ClockStretch);
 		
-		void Begin( int SDA = 0,
-		            int SCL = 0);
-		void UpdateData(int SDA = 0);
+		void Begin();
+		void UpdateData();
 		
 		float GetTemperature(TemperatureScale Degree = Cel);
 		float GetRelHumidity();
@@ -145,11 +166,11 @@
 		void SetTemperatureCalibrationPoints(CalibrationPoints SensorValues, CalibrationPoints Reference);
 		void SetRelHumidityCalibrationPoints(CalibrationPoints SensorValues, CalibrationPoints Reference);
 
-		void SoftReset(int SDA = 0);
+		void SoftReset();
 		void HardReset();
 		
-		void HeaterOn(int SDA = 0);
-		void HeaterOff(int SDA = 0);
+		void HeaterOn();
+		void HeaterOff();
 		
 		void SetAddress(uint8_t NewAddress);
 		void SetUpdateInterval(uint32_t UpdateIntervalMillisec);
@@ -170,7 +191,7 @@
 		uint32_t _UpdateIntervalMillisec = 500;
 		uint32_t _LastUpdateMillisec = 0;
 		uint32_t _TimeoutMillisec = 100;
-		void SendCommand(uint8_t MSB, uint8_t LSB, int SDA = 0);
+		void SendCommand(uint8_t MSB, uint8_t LSB);
 		bool CRC8(uint8_t MSB, uint8_t LSB, uint8_t CRC);
 		float ReturnValueIfError(float Value);
 		void ToReturnIfError(ValueIfError Value);
@@ -186,7 +207,7 @@
 			*	For more data, check the NIST chemistry webbook:
 			*	http://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Units=SI&Mask=4&Type=ANTOINE&Plot=on#ANTOINE
 		*/
-		float _AbsHumPoly[6] ={-157.004, 3158.0474, -25482.532, 103180.197, -209805.497, 171539.883}; 
+		const float _AbsHumPoly[6] ={-157.004, 3158.0474, -25482.532, 103180.197, -209805.497, 171539.883}; 
 		
 		enum Errors
 		{
