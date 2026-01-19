@@ -1,5 +1,5 @@
 ## Arduino library for Sensirion temperature and humidity sensors SHT30, SHT31 & SHT35.
-the heavy version.
+
 Check for /examples for examples of different use cases.
 
 The datasheet I followed is:
@@ -36,7 +36,7 @@ SHT3x(	int Address = 0x44, //I2C device address, 0x44 or 0x45
 > Wire1/2 support updated.
 > Your code may change since SDA pin usage removed.
 
-For usign with Wire1/Wire2 #define **BEFORE** importing library:
+For using with Wire1/Wire2 #define **BEFORE** importing library:
 ``` C
 #define SHT_Wire_1 //For Wire1
 //OR (not both)
