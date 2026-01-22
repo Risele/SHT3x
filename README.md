@@ -4,7 +4,6 @@ Check for /examples for examples of different use cases.
 
 The datasheet I followed is:
 https://sensirion.com/media/documents/213E6A3B/63A5A569/Datasheet_SHT3x_DIS.pdf
-For more simple version check the SimpleSHT3x library.
 
 The constructor structure:
 ```Cpp
