@@ -40,6 +40,7 @@ For using with Wire1/Wire2 #define **BEFORE** importing library:
 #define SHT_Wire_1 //For Wire1
 //OR (not both)
 #define SHT_Wire_2 //For Wire2
+#include <SHT3x.h>
 ```
 Wire is used by default
 
